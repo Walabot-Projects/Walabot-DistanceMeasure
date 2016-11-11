@@ -21,12 +21,10 @@ class Walabot:
             self.wlbt.SetArenaTheta(-0.1, 0.1, 10)
             self.wlbt.SetArenaPhi(-0.1, 0.1, 10)
             self.wlbt.SetArenaR(100, 1000, 5)
+            self.wlbt.SetThreshold(100)
         except self.wlbt.WalabotError as err:
             if err.code != 19:  # 'WALABOT_INSTRUMENT_NOT_FOUND'
                 raise err
-
-    def set_threshold(self, threshold):
-        self.wlbt.SetThreshold(threshold)
 
     def start(self):
         self.wlbt.Start()
@@ -47,12 +45,12 @@ def print_targets(targets):
     if not targets:
         print("No targets")
         return
-    # d_max = max(targets, key=lambda t: t[2])[2]  # farthest target
-    # d_min = min(targets, key=lambda t: t[2])[2]  # closest target
-    # d_amp = max(targets, key=lambda t: t[3])[2]  # closest target
-    print("Max Distance: {:3.0f}".format(max(targets, key=lambda t: t[2])[2]))
-    print("Min Distance: {:3.0f}".format(min(targets, key=lambda t: t[2])[2]))
-    print("Amplitude:    {:3.0f}".format(max(targets, key=lambda t: t[3])[2]))
+    d_min = min(targets, key=lambda t: t[2])[2]  # closest target
+    d_amp = max(targets, key=lambda t: t[3])[2]  # "strongest" target
+    if d_min == d_amp:
+        print("THE DISTANCE IS {:3.0f}\n".format(d_min))
+    else:
+        print("CALCULATING...\n")
 
 
 def main():
@@ -62,7 +60,6 @@ def main():
         print("Not Connected")
     else:
         print("Connected")
-    wlbt.set_threshold(100)
     wlbt.start()
     while True:
         print_targets(wlbt.get_targets())
