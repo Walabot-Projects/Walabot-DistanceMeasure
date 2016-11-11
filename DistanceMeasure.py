@@ -1,4 +1,5 @@
 from __future__ import print_function
+from sys import platform
 from os import system
 import WalabotAPI
 
@@ -41,7 +42,7 @@ class Walabot:
 
 
 def print_targets(targets):
-    system("cls")
+    system("cls" if platform == "win32" else "clear")  # clear the screen
     if not targets:
         print("No targets")
         return
